@@ -172,13 +172,10 @@ if (is_admin()) {
     // Options
     add_action('admin_head', 'tarski_upgrade_and_flush_options');
     add_action('admin_head', 'maybe_wipe_tarski_options');
-} else {
-    // JavaScript
-    wp_enqueue_script('tarski',
-        tarski_asset_path('app/js/tarski.js'),
-        array('jquery'), theme_version());
-    wp_enqueue_script('comment-reply');
 }
+
+// JavaScript
+add_action('wp_enqueue_scripts', 'tarski_enqueue_scripts');
 
 // Header
 add_action('wp_head', 'tarski_meta', 9);
