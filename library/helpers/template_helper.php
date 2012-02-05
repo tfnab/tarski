@@ -600,20 +600,4 @@ function tarski_credits() {
     get_template_part('app/templates/credits');
 }
 
-/**
- * Enqueue JavaScript files for blog
- *
- * @since 3.1.3
- *
- * @uses wp_enqueue_script
- *
- * @return void
- */
-function tarski_enqueue_scripts() {
-  wp_enqueue_script('tarski',
-      tarski_asset_path('app/js/tarski.js'),
-      array('jquery'), theme_version());
-  wp_enqueue_script('comment-reply');
-}
-
 ?>
