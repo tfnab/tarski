@@ -5,7 +5,7 @@ Description: An elegant, flexible theme with built-in display options and altern
 Author: Benedict Eastaugh
 Author URI: http://extralogical.net
 Tags: white, two-columns, left-sidebar, right-sidebar, fixed-width, custom-colors, custom-header, custom-background, custom-menu, editor-style, theme-options, threaded-comments, sticky-post, microformats, rtl-language-support, translation-ready
-Version: 3.2.0
+Version: 3.2.0RC1
 License: GNU General Public License, v2
 License URI: http://www.opensource.org/licenses/gpl-2.0.html
 */
@@ -39,6 +39,7 @@ body {
 #wrapper {
     width: 760px;
     text-align: left;
+    background-color: #fff;
 }
 
 body.rtl #wrapper {
@@ -154,8 +155,9 @@ body.centre #wrapper {
 }
 
 #title {
-    margin: 20px 0 -20px;
+    margin: 0 0 -20px;
     border-bottom: 1px solid #ccc;
+    padding-top: 20px;
 }
 
 #navigation {

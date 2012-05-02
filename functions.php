@@ -76,27 +76,31 @@ include(get_template_directory() . '/app/api/deprecated.php');
  */
 
 // Localisation
-load_theme_textdomain('tarski');
+load_theme_textdomain('tarski', get_template_directory() . '/languages');
 
-// Custom header image
-if (!defined('HEADER_TEXTCOLOR'))
-    define('HEADER_TEXTCOLOR', '');
-if (!defined('HEADER_IMAGE')) // %s is theme directory URI
-    define('HEADER_IMAGE', '%s/headers/' . get_tarski_option('header'));
-if (!defined('HEADER_IMAGE_WIDTH'))
-    define('HEADER_IMAGE_WIDTH', 720);
-if (!defined('HEADER_IMAGE_HEIGHT'))
-    define('HEADER_IMAGE_HEIGHT', 180);
-if (!defined('NO_HEADER_TEXT'))
-    define('NO_HEADER_TEXT', true);
+// Custom header support
+add_theme_support('custom-header', array(
+    'default-image'          => '%s/headers/' . get_tarski_option('header'),
+    'random-default'         => false,
+    'width'                  => 720,
+    'height'                 => 180,
+    'flex-height'            => false,
+    'flex-width'             => false,
+    'default-text-color'     => '',
+    'header-text'            => false,
+    'uploads'                => true,
+    'wp-head-callback'       => '',
+    'admin-head-callback'    => 'tarski_admin_header_style',
+    'admin-preview-callback' => ''
+));
 
-add_custom_image_header('', 'tarski_admin_header_style');
 register_default_headers(_tarski_list_header_images());
 
 // Content width; set this in a plugin or child theme if you want to change
 // the width of the theme via a stylesheet.
-if (!isset($content_width))
+if (!isset($content_width)) {
     $content_width = 500;
+}
 
 // Main sidebar widgets
 register_sidebar(array(
@@ -149,14 +153,22 @@ add_theme_support('automatic-feed-links');
 register_nav_menu('tarski_navbar', __('Tarski navbar', 'tarski'));
 
 // Custom background support
-add_custom_background();
+add_theme_support('custom-background');
 
 // Post thumbnails; change these settings via a child theme or plugin
 add_theme_support('post-thumbnails');
-if (get_tarski_option('featured_header'))
-set_post_thumbnail_size(HEADER_IMAGE_WIDTH, HEADER_IMAGE_HEIGHT, true);
-else
-set_post_thumbnail_size(150, 150, false);
+
+if (get_tarski_option('featured_header')) {
+    set_post_thumbnail_size(HEADER_IMAGE_WIDTH, HEADER_IMAGE_HEIGHT, true);
+} else {
+    set_post_thumbnail_size($content_width, 300, false);
+}
+
+// Image size for large feature images, used in the header
+add_image_size('large-feature', HEADER_IMAGE_WIDTH, HEADER_IMAGE_HEIGHT, true);
+
+// Image size for featured posts if a large-feature doesn't exist
+add_image_size('small-feature', $content_width, 300);
 
 // Post types
 add_theme_support('post-formats', array('aside'));

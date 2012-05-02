@@ -10,7 +10,7 @@
  * @uses get_tarski_option
  * @uses get_template_directory_uri
  * @uses get_stylesheet_directory_uri
- * @uses get_current_theme
+ * @uses wp_get_theme
  *
  * @return string
  */
@@ -21,7 +21,7 @@ function _tarski_get_alternate_stylesheet_uri() {
     if (is_string($style) && strlen($style) > 0) {
         $file  = $style;
     } elseif (is_array($style)) {
-        if ($style[0] == get_current_theme()) {
+        if ($style[0] == wp_get_theme()->Name) {
             $path = get_stylesheet_directory_uri();
             $file = $style[1];
         } elseif ('Tarski' == $style[0]) {
@@ -120,7 +120,7 @@ function trim_gallery_style($style) {
  *
  * @since 2.7
  *
- * @uses theme_version
+ * @uses wp_get_theme
  * @uses get_bloginfo
  * @uses get_option
  * @uses _tarski_asset_output
@@ -137,7 +137,7 @@ function trim_gallery_style($style) {
 function tarski_meta() {
     global $wp_query;
     
-    $themeversion = theme_version();
+    $themeversion = wp_get_theme()->Version;
     $excerpt      = (isset($wp_query->post)) ?
         trim(strip_tags(esc_attr($wp_query->post->post_excerpt))) : '';
     
@@ -168,7 +168,7 @@ function tarski_meta() {
  *
  * @uses wp_enqueue_script
  * @uses tarski_asset_path
- * @uses theme_version
+ * @uses wp_get_theme
  *
  * @see tarski_meta
  * @see tarski_stylesheets
@@ -178,7 +178,7 @@ function tarski_meta() {
 function tarski_enqueue_scripts() {
     wp_enqueue_script('tarski',
         tarski_asset_path('app/js/tarski.js'),
-        array('jquery'), theme_version());
+        array('jquery'), wp_get_theme()->Version);
     
     wp_enqueue_script('comment-reply');
 }
@@ -277,32 +277,37 @@ function _tarski_asset_output($type, $assets) {
  * @uses user_trailingslashit
  * @uses home_url
  *
+ * @global object $post
+ *
  * @return string
  */
 function tarski_headerimage() {
     global $post;
+    
     if (!get_theme_mod('header_image')) return;
     
     $header_img_url = get_header_image();
     
-    // inspired by twentyeleven
-    if ( get_tarski_option('featured_header') &&
-      is_singular() &&
-      has_post_thumbnail( $post->ID ) &&
-      ( /* $src, $width, $height */ $image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), array( HEADER_IMAGE_WIDTH, HEADER_IMAGE_WIDTH ) ) ) &&
-      $image[1] >= HEADER_IMAGE_WIDTH )
-      // Houston, we have a new header image!
-      $header_img_tag = get_the_post_thumbnail( $post->ID, 'post-thumbnail' );
-    else {
+    if (get_tarski_option('featured_header') &&
+        is_singular($post) &&
+        has_post_thumbnail($post->ID)) {
+        $image_size = array(HEADER_IMAGE_WIDTH, HEADER_IMAGE_WIDTH);
+        $image_id   = get_post_thumbnail_id($post->ID);
+        $image      = wp_get_attachment_image_src($image_id, $image_size);
+        
+        if ($image[1] >= HEADER_IMAGE_WIDTH) {
+            $header_img_tag = get_the_post_thumbnail($post->ID, $image_size);
+        }
+    }
     
     if (!$header_img_url) return;
     
-    $header_img_tag = sprintf('<img alt="%s" src="%s">',
-        get_tarski_option('display_title')
-            ? __('Header image', 'tarski')
-            : get_bloginfo('name'),
-        $header_img_url);
-    
+    if (!isset($header_img_tag)) {
+        $header_img_tag = sprintf('<img alt="%s" src="%s">',
+            get_tarski_option('display_title')
+                ? __('Header image', 'tarski')
+                : get_bloginfo('name'),
+            $header_img_url);
     }
     
     if (!(get_tarski_option('display_title') || is_front_page()))

@@ -2,10 +2,21 @@
 
 ### Version 3.2.0
 
+  * Added option to display featured post images in the header.
+  * Moved language files to `/languages` directory.
+  * Added POT file to theme files in `languages` directory.
+  * Replaced use of deprecated `add_custom_image_header` function.
+  * Stop defining header image constants.
   * Deprecated `tarski_doctitle` in favour of a filter on `wp_title`.
   * Updated the author details per Theme Directory requirements.
   * Updated theme description to explain more of its advantages.
   * Fixed options saving bug so post and page sidebar selection works properly.
+  * Replaced use of deprecated `get_current_theme` and `get_theme_data`
+    functions.
+  * Deprecated `tarski_version` in favour of core `wp_get_theme` function.
+  * Added white background to main content wrapper.
+  * Replaced use of deprecated `add_custom_background` function.
+  * Removed functions deprecated in version 3.1.0.
 
 
 ### Version 3.1.3
